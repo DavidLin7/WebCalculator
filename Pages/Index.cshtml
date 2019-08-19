@@ -1,0 +1,84 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Web Calculator";
+}
+
+<div class="text-center">
+    <h1>Web Calculator</h1>
+
+    <form method="post">
+
+        <p>Please select two numbers and an operation to perform between them</p>
+        <p>
+            <label for="NumberA">First number:</label>
+            <input name="NumberA" type="number" id="inpNumberA" required />
+            <button type="button" id="btnSpeechNumberA">Press to intuput with speech</button>
+        </p>
+        <p>
+            <label for="NumberB">Second number:</label>
+            <input name="NumberB" type="number" id="inpNumberB" required />
+            <button type="button" id="btnSpeechNumberB">Press to intuput with speech</button>
+        </p>
+
+        <span id="speechMessage"></span>
+        <br>
+        <input type="radio" id="operation1" name="Calc" value="Addition" required />
+        <label for="operation1">Addition</label>
+
+        <input type="radio" id="operation2" name="Calc" value="Subtraction" required />
+        <label for="operation2">Subtraction</label>
+
+        <input type="radio" id="operation3" name="Calc" value="Multiplication" required />
+        <label for="operation3">Multiplication</label>
+
+        <input type="radio" id="operation4" name="Calc" value="Division" required />
+        <label for="operation4">Division</label>
+
+        <p><button type="submit">Calculate!</button></p>
+
+
+    </form>
+
+    <p>
+        <h5>@Model.Result</h5>
+    </p>
+
+    <script>
+        let SpeechRecognition = webkitSpeechRecognition || SpeechRecognition;
+        let recognition = new SpeechRecognition();
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognition.continuous = false;
+
+        var refInputElement;
+        var refSpeechMessage = document.getElementById('speechMessage');
+
+        recognition.onspeechend = function () {
+            recognition.stop();
+        };
+
+
+        recognition.onresult = function (event) {
+            let last = event.results.length - 1;
+            let speech = event.results[last][0].transcript;
+            if (isNaN(speech)) {
+                refSpeechMessage.textContent = "Not a number: " + speech;
+            } else {
+                refInputElement.value = Number(speech);
+                refSpeechMessage.textContent = "";
+            }
+        }
+
+        document.querySelector('#btnSpeechNumberA').addEventListener('click', function () {
+            refInputElement = document.getElementById('inpNumberA');
+            recognition.start();
+        });
+
+        document.querySelector('#btnSpeechNumberB').addEventListener('click', function () {
+            refInputElement = document.getElementById('inpNumberB');
+            recognition.start();
+        });
+
+    </script>
+</div>
